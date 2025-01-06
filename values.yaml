@@ -21,8 +21,8 @@ service:
 pvc:
   accessModes:
     - ReadWriteOnce
-  storage: 500Mi
-  storageClassName: standart
+  storage: 250Mi
+  storageClassName: standard
 
 resources:
   limits:
