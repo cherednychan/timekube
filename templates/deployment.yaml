@@ -37,23 +37,26 @@ spec:
           args:
             - "-c"
             - |
-              while true; do
+              nginx && while true; do
                 echo "hey cutie patootie! $(date '+%Y-%m-%d %H:%M:%S')\n" >> /usr/share/nginx/html/index.html
                 sleep 30
               done
+#          args: ["-c", "echo 'hey cutie patootie! $(date +%Y-%m-%d-%H:%M:%S)\n' >> /usr/share/nginx/html/index.html"]
           ports:
             - containerPort: {{ .Values.service.port }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
-          volumeMounts:
+	  volumeMounts:
+            - name: html-pvc
+              mountPath: /usr/share/nginx/html
+            {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            {{- end }}
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.nodeSelector }}
+        - name: html-pvc
+          persistentVolumeClaim:
+            claimName: {{ .Values.pvc.name }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
